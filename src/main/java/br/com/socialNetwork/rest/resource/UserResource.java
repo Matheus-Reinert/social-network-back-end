@@ -1,4 +1,4 @@
-package br.com.socialNetwork.rest;
+package br.com.socialNetwork.rest.resource;
 
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.UserRepository;
