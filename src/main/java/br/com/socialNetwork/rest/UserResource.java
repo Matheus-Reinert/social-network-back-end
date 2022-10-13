@@ -4,7 +4,8 @@ import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.CreateUserRequest;
 import br.com.socialNetwork.rest.dto.ResponseError;
-import br.com.socialNetwork.rest.dto.UpdateUserRequest;
+import br.com.socialNetwork.rest.dto.UpdateField;
+import br.com.socialNetwork.rest.service.UserService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Set;
 
 @Path("/users")
@@ -23,11 +25,13 @@ public class UserResource {
 
     private final UserRepository repository;
     private final Validator validator;
+    private final UserService service;
 
     @Inject
-    public UserResource(UserRepository repository, Validator validator) {
+    public UserResource(UserRepository repository, Validator validator, UserService service) {
         this.repository = repository;
         this.validator = validator;
+        this.service = service;
     }
 
     @POST
@@ -86,12 +90,12 @@ public class UserResource {
     @PUT
     @Path("{id}")
     @Transactional
-    public Response updateUser(@PathParam("id") Long id, UpdateUserRequest userRequest){
+    public Response updateUser(@PathParam("id") Long id, List<UpdateField> updateFields){
 
         User user = repository.findById(id);
 
         if(user != null){
-
+            service.updateFieldValues(user,updateFields);
             return Response.noContent().build();
         }
 
