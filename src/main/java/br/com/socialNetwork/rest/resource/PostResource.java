@@ -2,15 +2,21 @@ package br.com.socialNetwork.rest.resource;
 
 import br.com.socialNetwork.domain.model.Post;
 import br.com.socialNetwork.domain.model.User;
+import br.com.socialNetwork.domain.repository.FollowerRepository;
 import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.CreatePostRequest;
+import br.com.socialNetwork.rest.dto.PostResponse;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Sort;
+import org.jboss.logging.annotations.Pos;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.stream.Collectors;
 
 @Path("/users/{userId}/posts")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -19,11 +25,13 @@ public class PostResource {
 
     private UserRepository userRepository;
     private PostRepository repository;
+    private FollowerRepository followerRepository;
 
     @Inject
-    public  PostResource(UserRepository userRepository, PostRepository repository){
+    public  PostResource(UserRepository userRepository, PostRepository repository, FollowerRepository followerRepository){
         this.userRepository = userRepository;
         this.repository = repository;
+        this.followerRepository = followerRepository;
     }
 
     @POST
@@ -43,6 +51,67 @@ public class PostResource {
         repository.persist(post);
 
         return Response.status(Response.Status.CREATED).build();
+    }
+
+    @DELETE
+    @Transactional
+    public Response deletePost(@PathParam("userId") Long userId, @HeaderParam("postId") Long postId){
+        User user = userRepository.findById(userId);
+        if(user == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        Post post = repository.findById(postId);
+
+        if(post == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        repository.deleteByPostAndUser(post.getId(), user.getId());
+
+        return Response.noContent().build();
+    }
+
+    @GET
+    public Response listPosts(@PathParam("userId") Long userId, @HeaderParam("followerId") Long followerId){
+        User user = userRepository.findById(userId);
+        if(user == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+
+        if(followerId == null){
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("You forgot the header followerId")
+                    .build();
+        }
+
+        User follower = userRepository.findById(followerId);
+
+        if(follower == null){
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("Nonexistent followerId")
+                    .build();
+        }
+
+        boolean follows = followerRepository.follows(follower, user);
+
+        if(!follows){
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("You can't see these posts")
+                    .build();
+        }
+
+        PanacheQuery<Post> query = repository.find("user", Sort.by("dateTime", Sort.Direction.Descending), user);
+        var list = query.list();
+
+        var postResponseList = list.stream()
+                .map(PostResponse::fromEntity)
+                .collect(Collectors.toList());
+
+        return Response.ok(postResponseList).build();
     }
 
 
