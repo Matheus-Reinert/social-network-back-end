@@ -1,5 +1,6 @@
 package br.com.socialNetwork.rest.resource;
 
+import br.com.socialNetwork.domain.model.Comment;
 import br.com.socialNetwork.domain.model.Post;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.FollowerRepository;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.stream.Collectors;
 
-@Path("/users/{userId}/posts")
+
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class PostResource {
@@ -36,6 +37,7 @@ public class PostResource {
 
     @POST
     @Transactional
+    @Path("/users/{userId}/posts")
     public Response savePost(
             @PathParam("userId") Long userId, CreatePostRequest request){
 
@@ -55,6 +57,7 @@ public class PostResource {
 
     @DELETE
     @Transactional
+    @Path("/users/{userId}/posts")
     public Response deletePost(@PathParam("userId") Long userId, @HeaderParam("postId") Long postId){
         User user = userRepository.findById(userId);
         if(user == null){
@@ -73,6 +76,7 @@ public class PostResource {
     }
 
     @GET
+    @Path("/users/{userId}/posts")
     public Response listPosts(@PathParam("userId") Long userId, @HeaderParam("followerId") Long followerId){
         User user = userRepository.findById(userId);
         if(user == null){
@@ -112,6 +116,25 @@ public class PostResource {
                 .collect(Collectors.toList());
 
         return Response.ok(postResponseList).build();
+    }
+
+
+    @PUT
+    @Path("/posts/{postId}/like/posts")
+    @Transactional
+    public Response likePost(@PathParam("postId") Long postId){
+
+        Post post = repository.findById(postId);
+
+        if(post == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        post.like();
+
+        repository.persist(post);
+
+        return Response.ok().build();
     }
 
 
