@@ -5,6 +5,7 @@ import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.CreateUserRequest;
 import br.com.socialNetwork.rest.dto.ResponseError;
 import br.com.socialNetwork.rest.dto.UpdateField;
+import br.com.socialNetwork.rest.service.TokenService;
 import br.com.socialNetwork.rest.service.UserService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
@@ -27,11 +28,14 @@ public class UserResource {
     private final Validator validator;
     private final UserService service;
 
+    private final TokenService tokenService;
+
     @Inject
-    public UserResource(UserRepository repository, Validator validator, UserService service) {
+    public UserResource(UserRepository repository, Validator validator, UserService service, TokenService tokenService) {
         this.repository = repository;
         this.validator = validator;
         this.service = service;
+        this.tokenService = tokenService;
     }
 
     @POST
@@ -47,6 +51,7 @@ public class UserResource {
         User user = new User();
         user.setEmail(userRequest.getEmail());
         user.setPassword(userRequest.getPassword());
+        user.setToken(tokenService.generateToken());
         repository.persist(user);
 
         return Response
