@@ -1,10 +1,12 @@
 package br.com.socialNetwork.domain.repository;
 
 import br.com.socialNetwork.domain.model.Follower;
+import br.com.socialNetwork.domain.model.Post;
 import br.com.socialNetwork.domain.model.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
+import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
@@ -34,5 +36,10 @@ public class FollowerRepository implements PanacheRepository<Follower> {
                 .map();
 
         delete("follower.id =:followerId and user.id =:userId", params);
+    }
+
+    public List<Follower> findAllUsersThatUserFollow(User user) {
+        PanacheQuery<Follower> query = find("follower.id", user.getId());
+        return query.list();
     }
 }

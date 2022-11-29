@@ -3,6 +3,7 @@ package br.com.socialNetwork.domain.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,6 +13,7 @@ public class Comment implements Reaction{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "NUMERIC(19,0)")
     private Long id;
     @Column(name = "comment")
     private String comment;

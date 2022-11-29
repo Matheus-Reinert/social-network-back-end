@@ -8,6 +8,9 @@ import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.CreatePostRequest;
 import br.com.socialNetwork.rest.dto.PostResponse;
+import br.com.socialNetwork.rest.service.PostService;
+import br.com.socialNetwork.rest.service.TokenService;
+import br.com.socialNetwork.rest.service.UserAuthenticationService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import org.jboss.logging.annotations.Pos;
@@ -17,9 +20,10 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Path("/posts")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class PostResource {
@@ -27,12 +31,18 @@ public class PostResource {
     private UserRepository userRepository;
     private PostRepository repository;
     private FollowerRepository followerRepository;
+    private UserAuthenticationService userAuthenticationService;
+    private PostService postService;
 
     @Inject
-    public  PostResource(UserRepository userRepository, PostRepository repository, FollowerRepository followerRepository){
+    public  PostResource(UserRepository userRepository, PostRepository repository,
+                         FollowerRepository followerRepository, UserAuthenticationService userAuthenticationService,
+                         PostService postService){
         this.userRepository = userRepository;
         this.repository = repository;
         this.followerRepository = followerRepository;
+        this.userAuthenticationService = userAuthenticationService;
+        this.postService = postService;
     }
 
     @POST
@@ -120,7 +130,7 @@ public class PostResource {
 
 
     @PUT
-    @Path("/posts/{postId}/like/posts")
+    @Path("/{postId}/like/posts")
     @Transactional
     public Response likePost(@PathParam("postId") Long postId){
 
@@ -135,6 +145,29 @@ public class PostResource {
         repository.persist(post);
 
         return Response.ok().build();
+    }
+
+    @Path("/user")
+    @Transactional
+    @GET
+    public Response getPostsByUser(@HeaderParam("Authorization") String token){
+        boolean validToken = userAuthenticationService.validateToken(token);
+
+        if (!validToken){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        List<Post> postsToUserVisualize = postService.getPostsToUserVisualize(token);
+
+        if(postsToUserVisualize == null || postsToUserVisualize.size() == 0){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+
+
+
+
+        return Response.ok(postsToUserVisualize).build();
     }
 
 

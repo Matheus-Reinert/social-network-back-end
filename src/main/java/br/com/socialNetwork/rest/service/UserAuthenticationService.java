@@ -39,7 +39,7 @@ public class UserAuthenticationService {
         return null;
     }
 
-    private boolean validateToken(String token) {
+    public boolean validateToken(String token) {
 
         try{
             String treatedToken = token.replace("Bearer ", "");
