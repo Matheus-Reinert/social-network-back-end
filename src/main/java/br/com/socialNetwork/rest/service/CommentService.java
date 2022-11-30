@@ -29,9 +29,8 @@ public class CommentService {
         }
     }
 
-    public String getComments(Post post){
-        List<Comment> comments = commentRepository.findCommentsByPost(post);
-        return new Gson().toJson(comments);
+    public List<Comment> getComments(Post post){
+        return commentRepository.findCommentsByPost(post);
     }
 
     public String getCommentChilds(Long commentId) {

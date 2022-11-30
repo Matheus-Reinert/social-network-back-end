@@ -6,14 +6,17 @@ import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.CommentRepository;
 import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.CommentRequest;
+import br.com.socialNetwork.rest.dto.*;
 import br.com.socialNetwork.rest.service.CommentService;
+import com.google.gson.Gson;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/comments")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -22,9 +25,7 @@ public class CommentResource {
 
     private UserRepository userRepository;
     private PostRepository postRepository;
-
     private CommentRepository commentRepository;
-
     private CommentService commentService;
 
     @Inject
@@ -120,7 +121,20 @@ public class CommentResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.ok(commentService.getComments(post)).build();
+        List<Comment> comments = commentService.getComments(post);
+
+        if(comments == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        CommentPerPostResponse responseObject = new CommentPerPostResponse();
+
+        var commentsResponseList = comments.stream()
+                .map(CommentResponse::new)
+                .collect(Collectors.toList());
+
+        responseObject.setCommentResponse(commentsResponseList);
+        return Response.ok(new Gson().toJson(responseObject.getCommentResponse())).build();
     }
 
     @GET
