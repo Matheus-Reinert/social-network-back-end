@@ -6,8 +6,7 @@ import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.FollowerRepository;
 import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.CreatePostRequest;
-import br.com.socialNetwork.rest.dto.PostResponse;
+import br.com.socialNetwork.rest.dto.*;
 import br.com.socialNetwork.rest.service.PostService;
 import br.com.socialNetwork.rest.service.TokenService;
 import br.com.socialNetwork.rest.service.UserAuthenticationService;
@@ -157,17 +156,20 @@ public class PostResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        List<Post> postsToUserVisualize = postService.getPostsToUserVisualize(token);
+        var postsToUserVisualize = postService.getPostsToUserVisualize(token);
 
         if(postsToUserVisualize == null || postsToUserVisualize.size() == 0){
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
+        PostsToUserResponse responseObject = new PostsToUserResponse();
 
+        var postsList = postsToUserVisualize.stream()
+                .map(PostResponse::new)
+                .collect(Collectors.toList());
 
-
-
-        return Response.ok(postsToUserVisualize).build();
+        responseObject.setPosts(postsList);
+        return Response.ok(responseObject).build();
     }
 
 
