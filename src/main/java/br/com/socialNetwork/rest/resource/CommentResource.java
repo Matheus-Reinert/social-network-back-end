@@ -39,7 +39,7 @@ public class CommentResource {
 
 
     @POST
-    @Path("posts/{postId}/comments")
+    @Path("posts/{postId}")
     @Transactional
     public Response createComment(
             @PathParam("postId") Long postId,
@@ -111,7 +111,7 @@ public class CommentResource {
     }
 
     @GET
-    @Path("posts/{postId}/comments")
+    @Path("posts/{postId}")
     @Transactional
     public Response commentsByPost(@PathParam("postId") Long postId){
 

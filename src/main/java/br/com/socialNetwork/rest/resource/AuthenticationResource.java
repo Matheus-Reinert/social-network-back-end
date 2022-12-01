@@ -34,9 +34,7 @@ public class AuthenticationResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        UserAuthenticateResponse userAuthenticateResponse = UserAuthenticateResponse.toResponse("Bearer ", user.getToken());
-
-//        return Response.ok().build();
+        UserAuthenticateResponse userAuthenticateResponse = UserAuthenticateResponse.toResponse("Bearer ", user.getToken(), user);
 
         return Response
                 .status(Response.Status.OK.getStatusCode())
