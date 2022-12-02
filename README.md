@@ -37,6 +37,17 @@ Se você deseja aprender mais sobre Quarkus -> https://quarkus.io/ .
 
 ### O banco de dados escolhido foi o MySql.
 
+* Baixar localmente [MySql](https://dev.mysql.com/downloads/workbench/)
+
+Configurar com Usuário, senha e porta ->
+
+![](images/configuracaoMysql.png)
+
+Para criar o banco utilize os comando encontrados em:
+src -> main -> resources -> db -> migration 
+
+
+
 ---
 
 * User 
