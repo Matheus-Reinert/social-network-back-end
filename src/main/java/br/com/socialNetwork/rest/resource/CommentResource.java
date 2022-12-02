@@ -9,6 +9,10 @@ import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.*;
 import br.com.socialNetwork.rest.service.CommentService;
 import com.google.gson.Gson;
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -40,6 +44,7 @@ public class CommentResource {
 
     @POST
     @Path("posts/{postId}")
+    @Operation(summary = "Criar comentário")
     @Transactional
     public Response createComment(
             @PathParam("postId") Long postId,
@@ -80,6 +85,7 @@ public class CommentResource {
 
     @PUT
     @Path("{commentId}")
+    @Operation(summary = "Editar comentário")
     @Transactional
     public Response updateComment(@PathParam("commentId") Long commentId, CommentRequest commentRequest) {
 
@@ -97,6 +103,7 @@ public class CommentResource {
 
     @DELETE
     @Path("{commentId}")
+    @Operation(summary = "Remover comentário")
     @Transactional
     public Response deleteComment(@PathParam("commentId") Long commentId){
         Comment comment = commentRepository.findById(commentId);
@@ -112,6 +119,7 @@ public class CommentResource {
 
     @GET
     @Path("posts/{postId}")
+    @Operation(summary = "Retornar comentários principais")
     @Transactional
     public Response commentsByPost(@PathParam("postId") Long postId){
 
@@ -138,7 +146,8 @@ public class CommentResource {
     }
 
     @GET
-    @Path("{commentId}/comments")
+    @Path("{commentId}")
+    @Operation(summary = "Retornar comentários filhos")
     @Transactional
     public Response commentsChild(@PathParam("commentId") Long commentId){
 
@@ -152,7 +161,8 @@ public class CommentResource {
     }
 
     @PUT
-    @Path("{commentId}/like/comments")
+    @Path("{commentId}/like")
+    @Operation(summary = "Adicionar like ao comentário")
     @Transactional
     public Response likeComment(@PathParam("commentId") Long commentId){
 

@@ -6,6 +6,7 @@ import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.FollowerRequest;
 import br.com.socialNetwork.rest.dto.FollowerResponse;
 import br.com.socialNetwork.rest.dto.FollowersPerUserResponse;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -30,6 +31,7 @@ public class FollowerResource {
 
     @PUT
     @Transactional
+    @Operation(summary = "Seguir usuário")
     public Response followUser(@PathParam("userId") Long userId, FollowerRequest followerRequest){
 
         if(userId.equals(followerRequest.getFollowerId())){
@@ -57,6 +59,7 @@ public class FollowerResource {
     }
 
     @GET
+    @Operation(summary = "Retornar todos seguidores")
     public Response listFollowers(@PathParam("userId") Long userId){
 
         var user = userRepository.findById(userId);
@@ -77,6 +80,7 @@ public class FollowerResource {
     }
 
     @DELETE
+    @Operation(summary = "Deixar de seguir usuário")
     @Transactional
     public Response unfollowUser(
             @PathParam("userId") Long userId,

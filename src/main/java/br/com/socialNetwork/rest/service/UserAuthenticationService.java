@@ -29,7 +29,6 @@ public class UserAuthenticationService {
     public User authenticate(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail());
 
-
         if (user == null) {
             return null;
         } else {

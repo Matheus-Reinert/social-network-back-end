@@ -12,6 +12,7 @@ import br.com.socialNetwork.rest.service.TokenService;
 import br.com.socialNetwork.rest.service.UserAuthenticationService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.jboss.logging.annotations.Pos;
 
 import javax.inject.Inject;
@@ -46,7 +47,8 @@ public class PostResource {
 
     @POST
     @Transactional
-    @Path("/users/{userId}/posts")
+    @Operation(summary = "Criar post")
+    @Path("/users/{userId}")
     public Response savePost(
             @PathParam("userId") Long userId, CreatePostRequest request){
 
@@ -66,7 +68,8 @@ public class PostResource {
 
     @DELETE
     @Transactional
-    @Path("/users/{userId}/posts")
+    @Operation(summary = "Remover post")
+    @Path("/users/{userId}")
     public Response deletePost(@PathParam("userId") Long userId, @HeaderParam("postId") Long postId){
         User user = userRepository.findById(userId);
         if(user == null){
@@ -85,7 +88,8 @@ public class PostResource {
     }
 
     @GET
-    @Path("/users/{userId}/posts")
+    @Operation(summary = "Retornar post")
+    @Path("/users/{userId}")
     public Response listPosts(@PathParam("userId") Long userId, @HeaderParam("followerId") Long followerId){
         User user = userRepository.findById(userId);
         if(user == null){
@@ -129,7 +133,8 @@ public class PostResource {
 
 
     @PUT
-    @Path("/{postId}/like/posts")
+    @Path("/{postId}/like")
+    @Operation(summary = "Adicionar like ao post")
     @Transactional
     public Response likePost(@PathParam("postId") Long postId){
 
@@ -148,6 +153,7 @@ public class PostResource {
 
     @Path("/user")
     @Transactional
+    @Operation(summary = "Retornar posts de usuários seguidos")
     @GET
     public Response getPostsByUser(@HeaderParam("Authorization") String token){
         boolean validToken = userAuthenticationService.validateToken(token);

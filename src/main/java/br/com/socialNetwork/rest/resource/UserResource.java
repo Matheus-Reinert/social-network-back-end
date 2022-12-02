@@ -9,6 +9,7 @@ import br.com.socialNetwork.rest.service.PasswordService;
 import br.com.socialNetwork.rest.service.TokenService;
 import br.com.socialNetwork.rest.service.UserService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -44,6 +45,7 @@ public class UserResource {
 
     @POST
     @Transactional
+    @Operation(summary = "Criar usuário")
     public Response createUser( CreateUserRequest userRequest){
 
         Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
@@ -66,6 +68,7 @@ public class UserResource {
     }
 
     @GET
+    @Operation(summary = "Retornar todos usuários")
     public Response listAllUsers(){
         PanacheQuery<User> query = repository.findAll();
         return Response.ok(query.list()).build();
@@ -73,6 +76,7 @@ public class UserResource {
 
     @GET
     @Path("{id}")
+    @Operation(summary = "Retornar usuário")
     public Response getUserById(@PathParam("id") Long id){
         User user = repository.findById(id);
 
@@ -85,6 +89,7 @@ public class UserResource {
 
     @DELETE
     @Path("{id}")
+    @Operation(summary = "Remover usuário")
     @Transactional
     public Response deleteUser(@PathParam("id") Long id){
         User user = repository.findById(id);
@@ -99,6 +104,7 @@ public class UserResource {
 
     @PUT
     @Path("{id}")
+    @Operation(summary = "Editar usuário")
     @Transactional
     public Response updateUser(@PathParam("id") Long id, List<UpdateField> updateFields){
 

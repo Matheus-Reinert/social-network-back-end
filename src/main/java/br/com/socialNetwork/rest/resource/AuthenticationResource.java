@@ -6,6 +6,7 @@ import br.com.socialNetwork.rest.dto.CreatePostRequest;
 import br.com.socialNetwork.rest.dto.LoginRequest;
 import br.com.socialNetwork.rest.dto.UserAuthenticateResponse;
 import br.com.socialNetwork.rest.service.UserAuthenticationService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -24,8 +25,8 @@ public class AuthenticationResource {
     }
 
     @POST
+    @Operation(summary = "Efetuar login")
     @Transactional
-//    public Response login(LoginRequest loginRequest, @HeaderParam("authorization") String authorization){
 
     public Response login(LoginRequest loginRequest){
         User user = userAuthenticationService.authenticate(loginRequest);
