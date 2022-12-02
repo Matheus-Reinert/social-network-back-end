@@ -78,3 +78,31 @@ Você pode rodar a aplicação com o seguinte comando
 Para visualizar o swagger:
 
 * Acessar: http://localhost:8080/q/swagger-ui/#/
+
+![](images/swagger.png)
+
+Authentication
+
+![](images/authentication-swagger.png)
+
+User
+
+![](images/user-swagger.png)
+
+Comment
+
+![](images/comment-swagger.png)
+
+Post
+
+![](images/post-swagger.png)
+
+Follower
+
+![](images/follower-swagger.png)
+
+# Arquitetura do projeto
+
+O Projeto foi criado utilizando java 11 com Quarkus. A arquitetura escolhida foi DDD.
+
+![](images/arquitetura-de-pasta.png)
