@@ -3,7 +3,6 @@ package br.com.socialNetwork.rest.dto;
 import br.com.socialNetwork.domain.model.Follower;
 import br.com.socialNetwork.domain.model.Post;
 import lombok.Data;
-import org.jboss.logging.annotations.Pos;
 
 import java.time.LocalDateTime;
 

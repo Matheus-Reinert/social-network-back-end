@@ -20,7 +20,7 @@ public class CommentRepository implements PanacheRepository<Comment> {
     }
 
     public List<Comment> findByParentId(Long commentParentId) {
-        PanacheQuery<Comment> query = find("commentParentId", Sort.by("dateTime", Sort.Direction.Descending), commentParentId);
+        PanacheQuery<Comment> query = find("commentParent_id", Sort.by("dateTime", Sort.Direction.Descending), commentParentId);
         return query.list();
     }
 }

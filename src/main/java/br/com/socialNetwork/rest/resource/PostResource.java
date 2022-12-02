@@ -13,7 +13,6 @@ import br.com.socialNetwork.rest.service.UserAuthenticationService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.jboss.logging.annotations.Pos;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -46,11 +45,10 @@ public class PostResource {
     }
 
     @POST
+    @Path("/users/{userId}")
     @Transactional
     @Operation(summary = "Criar post")
-    @Path("/users/{userId}")
-    public Response savePost(
-            @PathParam("userId") Long userId, CreatePostRequest request){
+    public Response savePost(@PathParam("userId") Long userId, CreatePostRequest request){
 
         User user = userRepository.findById(userId);
         if(user == null){
