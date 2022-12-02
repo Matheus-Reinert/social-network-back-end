@@ -18,21 +18,24 @@ public class UserAuthenticationService {
 
     private final UserRepository userRepository;
     private TokenService tokenService;
+    private PasswordService passwordService;
 
-    public UserAuthenticationService(UserRepository userRepository, TokenService tokenService) {
+    public UserAuthenticationService(UserRepository userRepository, TokenService tokenService, PasswordService passwordService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
+        this.passwordService = passwordService;
     }
 
     public User authenticate(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail());
 
+
         if (user == null) {
             return null;
         } else {
-            if(loginRequest.getPassword().equals(user.getPassword())){
+            boolean validPassword = passwordService.encoder().matches(loginRequest.getPassword(),user.getPassword());
+            if(validPassword){
                 user.setToken(tokenService.generateToken());
-//            user.setToken(tokenService.generateToken());
                 return user;
             }
         }

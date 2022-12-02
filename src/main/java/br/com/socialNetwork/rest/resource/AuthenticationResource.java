@@ -31,7 +31,7 @@ public class AuthenticationResource {
         User user = userAuthenticationService.authenticate(loginRequest);
 
         if(user == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
         UserAuthenticateResponse userAuthenticateResponse = UserAuthenticateResponse.toResponse("Bearer ", user.getToken(), user);
