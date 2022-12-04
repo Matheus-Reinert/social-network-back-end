@@ -18,11 +18,15 @@ public class UserService {
     CommentRepository commentRepository;
     FollowerRepository followerRepository;
 
-    public UserService(UserRepository repository, PostRepository postRepository, CommentRepository commentRepository, FollowerRepository followerRepository){
+    PasswordService passwordService;
+
+    public UserService(UserRepository repository, PostRepository postRepository, CommentRepository commentRepository,
+                       FollowerRepository followerRepository, PasswordService passwordService){
         this.userRepository = repository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.followerRepository = followerRepository;
+        this.passwordService = passwordService;
     }
 
     public void updateFieldValues(User user, List<UpdateField> updateFields) {
@@ -48,7 +52,9 @@ public class UserService {
        } else if (field.equals("email")) {
            user.setEmail(newValue);
        } else if (field.equals("password")) {
-           user.setPassword(newValue);
+           user.setPassword(passwordService.encoder().encode(newValue));
+       } else if (field.equals("username")) {
+           user.setUsername("@" + newValue);
        }
     }
 
