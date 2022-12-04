@@ -5,10 +5,7 @@ import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
 import br.com.socialNetwork.rest.dto.user.ResponseError;
 import br.com.socialNetwork.rest.dto.login.UpdateField;
-import br.com.socialNetwork.rest.service.PasswordService;
-import br.com.socialNetwork.rest.service.TokenService;
 import br.com.socialNetwork.rest.service.UserService;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.inject.Inject;
@@ -27,20 +24,14 @@ import java.util.Set;
 public class UserResource {
 
     private final UserRepository repository;
-    private final Validator validator;
-    private final UserService service;
-
-    private final TokenService tokenService;
-
-    private final PasswordService passwordService;
+    private final Validator userValidator;
+    private final UserService userService;
 
     @Inject
-    public UserResource(UserRepository repository, Validator validator, UserService service, TokenService tokenService, PasswordService passwordService) {
+    public UserResource(UserRepository repository, Validator validator, UserService service) {
         this.repository = repository;
-        this.validator = validator;
-        this.service = service;
-        this.tokenService = tokenService;
-        this.passwordService = passwordService;
+        this.userValidator = validator;
+        this.userService = service;
     }
 
     @POST
@@ -48,43 +39,28 @@ public class UserResource {
     @Operation(summary = "Criar usuário")
     public Response createUser( CreateUserRequest userRequest){
 
-        Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
+        Set<ConstraintViolation<CreateUserRequest>> violations = userValidator.validate(userRequest);
 
         if(!violations.isEmpty()){
             return  ResponseError.createFromValidation(violations).withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
         }
 
-        User user = new User();
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(passwordService.encoder().encode(userRequest.getPassword()));
-        user.setToken(tokenService.generateToken());
-        user.setUsername(userRequest.getUsername());
-        repository.persist(user);
+        User user = userService.createUser(userRequest);
 
-        return Response
-                .status(Response.Status.CREATED.getStatusCode())
-                .entity(user)
-                .build();
+        return Response.status(Response.Status.CREATED.getStatusCode()).entity(user).build();
     }
 
     @GET
     @Operation(summary = "Retornar todos usuários")
     public Response listAllUsers(){
-        PanacheQuery<User> query = repository.findAll();
-        return Response.ok(query.list()).build();
+        return Response.ok(repository.findAll().list()).build();
     }
 
     @GET
     @Path("{id}")
     @Operation(summary = "Retornar usuário")
     public Response getUserById(@PathParam("id") Long id){
-        User user = repository.findById(id);
-
-        if(user != null){
-            return Response.ok(user).build();
-        }
-
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return userService.findUserById(id);
     }
 
     @DELETE
@@ -92,14 +68,7 @@ public class UserResource {
     @Operation(summary = "Remover usuário")
     @Transactional
     public Response deleteUser(@PathParam("id") Long id){
-        User user = repository.findById(id);
-
-        if(user != null){
-            service.deleteUser(user);
-            return Response.noContent().build();
-        }
-
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return userService.deleteUserById(id);
     }
 
     @PUT
@@ -107,14 +76,6 @@ public class UserResource {
     @Operation(summary = "Editar usuário")
     @Transactional
     public Response updateUser(@PathParam("id") Long id, List<UpdateField> updateFields){
-
-        User user = repository.findById(id);
-
-        if(user != null){
-            service.updateFieldValues(user,updateFields);
-            return Response.noContent().build();
-        }
-
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return userService.updateUserFields(id, updateFields);
     }
 }

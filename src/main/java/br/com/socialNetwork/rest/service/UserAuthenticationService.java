@@ -1,7 +1,7 @@
 package br.com.socialNetwork.rest.service;
 
-import br.com.socialNetwork.domain.exception.ExpiredTokenException;
-import br.com.socialNetwork.domain.exception.InvalidTokenException;
+import br.com.socialNetwork.domain.exception.token.ExpiredTokenException;
+import br.com.socialNetwork.domain.exception.token.InvalidTokenException;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.login.LoginRequest;

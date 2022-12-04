@@ -1,4 +1,4 @@
-package br.com.socialNetwork.domain.exception;
+package br.com.socialNetwork.domain.exception.token;
 
 public class InvalidTokenException extends RuntimeException {
 }
