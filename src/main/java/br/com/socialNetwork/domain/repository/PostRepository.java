@@ -2,6 +2,7 @@ package br.com.socialNetwork.domain.repository;
 
 import br.com.socialNetwork.domain.model.Follower;
 import br.com.socialNetwork.domain.model.Post;
+import br.com.socialNetwork.domain.model.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
@@ -35,5 +36,13 @@ public class PostRepository implements PanacheRepository<Post> {
         }
 
         return posts;
+    }
+
+    public void deleteByUser(Long userId) {
+        var params = Parameters
+                .with("userId", userId)
+                .map();
+
+        delete("user.id =:userId", params);
     }
 }

@@ -1,6 +1,9 @@
 package br.com.socialNetwork.rest.service;
 
 import br.com.socialNetwork.domain.model.User;
+import br.com.socialNetwork.domain.repository.CommentRepository;
+import br.com.socialNetwork.domain.repository.FollowerRepository;
+import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.login.UpdateField;
 
@@ -10,16 +13,24 @@ import java.util.List;
 @ApplicationScoped
 public class UserService {
 
-    UserRepository repository;
+    UserRepository userRepository;
+    PostRepository postRepository;
+    CommentRepository commentRepository;
+    FollowerRepository followerRepository;
 
-    public UserService(UserRepository repository){
-        this.repository = repository;
+    public UserService(UserRepository repository, PostRepository postRepository, CommentRepository commentRepository, FollowerRepository followerRepository){
+        this.userRepository = repository;
+        this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
+        this.followerRepository = followerRepository;
     }
 
     public void updateFieldValues(User user, List<UpdateField> updateFields) {
         for(UpdateField updateField: updateFields){
             updateFieldValuesInUser(user, updateField);
         }
+
+        userRepository.persist(user);
     }
 
     private void updateFieldValuesInUser(User user, UpdateField updateField) {
@@ -39,7 +50,16 @@ public class UserService {
        } else if (field.equals("password")) {
            user.setPassword(newValue);
        }
+    }
 
-       repository.persist(user);
+    public void deleteUser(User user) {
+        try {
+            commentRepository.deleteByUser(user.getId());
+            postRepository.deleteByUser(user.getId());
+            followerRepository.deleteByUser(user.getId());
+            userRepository.delete(user);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }

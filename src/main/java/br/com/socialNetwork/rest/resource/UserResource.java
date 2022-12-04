@@ -95,7 +95,7 @@ public class UserResource {
         User user = repository.findById(id);
 
         if(user != null){
-            repository.delete(user);
+            service.deleteUser(user);
             return Response.noContent().build();
         }
 

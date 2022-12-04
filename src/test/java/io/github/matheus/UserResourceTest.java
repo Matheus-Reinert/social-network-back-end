@@ -1,10 +1,13 @@
 package io.github.matheus;
 
 
+import br.com.socialNetwork.domain.model.Follower;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.UserRepository;
+import br.com.socialNetwork.rest.dto.login.UpdateField;
 import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
 import br.com.socialNetwork.rest.dto.user.ResponseError;
+import io.github.matheus.util.UserTestUtil;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -12,13 +15,14 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -29,6 +33,20 @@ class UserResourceTest {
 
     @Inject
     UserRepository userRepository;
+    @Inject
+    UserTestUtil userTestUtil;
+    static int userListSize;
+    static int deletedUserId;
+
+    @BeforeEach
+    @Transactional
+    void setUP(){
+        var user = new User();
+        user.setEmail("matheus.reinert@hotmail.com");
+        user.setUsername("@matheusReinert");
+        user.setPassword("teste");
+        userRepository.persist(user);
+    }
 
     @Test
     @DisplayName("should create user successfully")
@@ -82,14 +100,76 @@ class UserResourceTest {
     @DisplayName("Should list all users")
     @Order(3)
     public void listAllUsersTest(){
-        int listSize = userRepository.findAll().list().size();
+        userListSize = userRepository.findAll().list().size();
 
         given()
                     .contentType(ContentType.JSON)
                 .when()
                     .get(apiURL)
                 .then()
-                    .statusCode(200).body("size()", Matchers.is(listSize));
+                    .statusCode(200).body("size()", Matchers.is(userListSize));
    }
 
+    @Test
+    @DisplayName("Should delete an users")
+    @Order(4)
+    public void deleteUser(){
+        Random random = new Random();
+
+        deletedUserId = random.nextInt(userListSize);
+        if(deletedUserId == 0){
+            deletedUserId = 1;
+        }
+
+        var response = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .pathParams("id", deletedUserId)
+                .delete(apiURL + "/{id}")
+                .then()
+                .extract().response();
+
+        int newListSize = userRepository.findAll().list().size();
+
+
+        assertEquals(204, response.getStatusCode());
+        assertEquals(userListSize, newListSize);
+    }
+
+    @Test
+    @DisplayName("Should return 404 if not found user in delete")
+    @Order(5)
+    public void deleteUserError(){
+        Random random = new Random();
+
+        int id = random.nextInt(userListSize) + 1000;
+
+        var response = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .pathParams("id", id)
+                .delete(apiURL + "/{id}")
+                .then()
+                .extract().response();
+
+        assertEquals(404, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Should return 404 if not found users in update")
+    @Order(6)
+    public void updateUserError(){
+        Random random = new Random();
+        int id = random.nextInt(userListSize) + 1000;
+
+        var response = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .pathParams("id", id)
+                .put(apiURL + "/{id}")
+                .then()
+                .extract().response();
+
+        assertEquals(404, response.getStatusCode());
+    }
 }
