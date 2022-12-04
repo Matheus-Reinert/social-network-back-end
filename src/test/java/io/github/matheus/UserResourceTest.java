@@ -7,6 +7,7 @@ import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.login.UpdateField;
 import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
 import br.com.socialNetwork.rest.dto.user.ResponseError;
+import br.com.socialNetwork.rest.service.TokenService;
 import io.github.matheus.util.UserTestUtil;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -35,8 +36,11 @@ class UserResourceTest {
     UserRepository userRepository;
     @Inject
     UserTestUtil userTestUtil;
+    @Inject
+    TokenService tokenService;
     static int userListSize;
     static int deletedUserId;
+    static String token;
 
     @BeforeEach
     @Transactional
@@ -45,7 +49,9 @@ class UserResourceTest {
         user.setEmail("matheus.reinert@hotmail.com");
         user.setUsername("@matheusReinert");
         user.setPassword("teste");
+        user.setToken(tokenService.generateToken());
         userRepository.persist(user);
+        token = user.getToken();
     }
 
     @Test
@@ -105,6 +111,7 @@ class UserResourceTest {
         given()
                     .contentType(ContentType.JSON)
                 .when()
+                .header("Authorization", token)
                     .get(apiURL)
                 .then()
                     .statusCode(200).body("size()", Matchers.is(userListSize));
@@ -125,6 +132,7 @@ class UserResourceTest {
                 .contentType(ContentType.JSON)
                 .when()
                 .pathParams("id", deletedUserId)
+                .header("Authorization", token)
                 .delete(apiURL + "/{id}")
                 .then()
                 .extract().response();
@@ -148,6 +156,7 @@ class UserResourceTest {
                 .contentType(ContentType.JSON)
                 .when()
                 .pathParams("id", id)
+                .header("Authorization", token)
                 .delete(apiURL + "/{id}")
                 .then()
                 .extract().response();
@@ -165,6 +174,7 @@ class UserResourceTest {
         var response = given()
                 .contentType(ContentType.JSON)
                 .when()
+                .header("Authorization", token)
                 .pathParams("id", id)
                 .put(apiURL + "/{id}")
                 .then()

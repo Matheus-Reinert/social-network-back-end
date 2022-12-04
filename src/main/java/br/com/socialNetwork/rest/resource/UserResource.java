@@ -5,6 +5,7 @@ import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
 import br.com.socialNetwork.rest.dto.user.ResponseError;
 import br.com.socialNetwork.rest.dto.login.UpdateField;
+import br.com.socialNetwork.rest.service.UserAuthenticationService;
 import br.com.socialNetwork.rest.service.UserService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
@@ -26,12 +27,14 @@ public class UserResource {
     private final UserRepository repository;
     private final Validator userValidator;
     private final UserService userService;
+    private final UserAuthenticationService userAuthenticationService;
 
     @Inject
-    public UserResource(UserRepository repository, Validator validator, UserService service) {
+    public UserResource(UserRepository repository, Validator validator, UserService service, UserAuthenticationService userAuthenticationService) {
         this.repository = repository;
         this.userValidator = validator;
         this.userService = service;
+        this.userAuthenticationService = userAuthenticationService;
     }
 
     @POST
@@ -52,30 +55,35 @@ public class UserResource {
 
     @GET
     @Operation(summary = "Retornar todos usuários")
-    public Response listAllUsers(){
+    public Response listAllUsers(@HeaderParam("Authorization") String token){
+
+        if (!userAuthenticationService.validateToken(token)){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         return Response.ok(repository.findAll().list()).build();
     }
 
     @GET
     @Path("{id}")
     @Operation(summary = "Retornar usuário")
-    public Response getUserById(@PathParam("id") Long id){
-        return userService.findUserById(id);
+    public Response getUserById(@PathParam("id") Long id, @HeaderParam("Authorization") String token){
+        return userService.findUserById(id, token);
     }
 
     @DELETE
     @Path("{id}")
     @Operation(summary = "Remover usuário")
     @Transactional
-    public Response deleteUser(@PathParam("id") Long id){
-        return userService.deleteUserById(id);
+    public Response deleteUser(@PathParam("id") Long id, @HeaderParam("Authorization") String token){
+        return userService.deleteUserById(id, token);
     }
 
     @PUT
     @Path("{id}")
     @Operation(summary = "Editar usuário")
     @Transactional
-    public Response updateUser(@PathParam("id") Long id, List<UpdateField> updateFields){
-        return userService.updateUserFields(id, updateFields);
+    public Response updateUser(@PathParam("id") Long id, List<UpdateField> updateFields, @HeaderParam("Authorization") String token){
+        return userService.updateUserFields(id, updateFields, token);
     }
 }

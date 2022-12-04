@@ -24,15 +24,17 @@ public class UserService {
     private final FollowerRepository followerRepository;
     private final PasswordService passwordService;
     private final TokenService tokenService;
+    private final UserAuthenticationService userAuthenticationService;
 
     public UserService(UserRepository repository, PostRepository postRepository, CommentRepository commentRepository,
-                       FollowerRepository followerRepository, PasswordService passwordService, TokenService tokenService){
+                       FollowerRepository followerRepository, PasswordService passwordService, TokenService tokenService, UserAuthenticationService userAuthenticationService){
         this.userRepository = repository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.followerRepository = followerRepository;
         this.passwordService = passwordService;
         this.tokenService = tokenService;
+        this.userAuthenticationService = userAuthenticationService;
     }
 
     public void updateFieldValues(User user, List<UpdateField> updateFields) {
@@ -92,7 +94,12 @@ public class UserService {
         }
     }
 
-    public Response findUserById(Long id) {
+    public Response findUserById(Long id, String token) {
+
+        if (!userAuthenticationService.validateToken(token)){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         User user = userRepository.findById(id);
 
         if(user != null){
@@ -102,7 +109,12 @@ public class UserService {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
-    public Response deleteUserById(Long id) {
+    public Response deleteUserById(Long id, String token) {
+
+        if (!userAuthenticationService.validateToken(token)){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         User user = userRepository.findById(id);
 
         if(user != null){
@@ -113,9 +125,13 @@ public class UserService {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
-    public Response updateUserFields(Long id, List<UpdateField> updateFields) {
+    public Response updateUserFields(Long id, List<UpdateField> updateFields, String token) {
 
         try {
+            if (!userAuthenticationService.validateToken(token)){
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+
             User user = userRepository.findById(id);
 
             if(user != null){
