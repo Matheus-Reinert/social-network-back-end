@@ -8,6 +8,7 @@ import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.post.CreatePostRequest;
 import br.com.socialNetwork.rest.resource.PostResource;
+import br.com.socialNetwork.rest.service.TokenService;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -32,10 +33,15 @@ class PostResourceTest {
 
     @Inject
     PostRepository postRepository;
+
+    @Inject
+    TokenService tokenService;
     Long userId;
     Long userNotFollowerId;
 
     Long userFollowerId;
+
+    static String token;
 
     @BeforeEach
     @Transactional
@@ -44,8 +50,10 @@ class PostResourceTest {
         user.setEmail("matheus.reinert@hotmail.com");
         user.setUsername("@matheusReinert");
         user.setPassword("teste");
+        user.setToken(tokenService.generateToken());
         userRepository.persist(user);
         userId = user.getId();
+        token = user.getToken();
 
         var userNotFollower = new User();
         user.setEmail("eliaser.reinert@hotmail.com");
@@ -83,6 +91,7 @@ class PostResourceTest {
                 .contentType(ContentType.JSON)
                 .body(body)
                 .pathParam("userId",userId)
+                .header("Authorization", token)
                 .when()
                 .post("users/{userId}")
                 .then()
@@ -100,6 +109,7 @@ class PostResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(postRequest)
+                .header("Authorization", token)
                 .pathParam("userId",nonexistentUserId)
                 .when()
                 .post("users/{userId}")
@@ -115,6 +125,7 @@ class PostResourceTest {
         given().
                 pathParam("userId", nonexistentUserId)
                 .when()
+                .header("Authorization", token)
                 .get("users/{userId}")
                 .then()
                 .statusCode(404);
@@ -127,6 +138,7 @@ class PostResourceTest {
         given().
                 pathParam("userId", userId)
                 .when()
+                .header("Authorization", token)
                 .get("users/{userId}")
                 .then()
                 .statusCode(400)
@@ -142,6 +154,7 @@ class PostResourceTest {
         given().
                 pathParam("userId", userId)
                 .header("followerId", nonexistentFollowerId)
+                .header("Authorization", token)
                 .when()
                 .get("users/{userId}")
                 .then()
@@ -156,6 +169,7 @@ class PostResourceTest {
         given().
                 pathParam("userId", userId)
                 .header("followerId", userNotFollowerId)
+                .header("Authorization", token)
                 .when()
                 .get("users/{userId}")
                 .then()
@@ -170,6 +184,7 @@ class PostResourceTest {
         given()
                 .pathParam("userId", userId)
                 .header("followerId", userFollowerId)
+                .header("Authorization", token)
                 .when()
                 .get("users/{userId}")
                 .then()

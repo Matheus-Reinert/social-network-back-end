@@ -1,8 +1,8 @@
 package br.com.socialNetwork.rest.service;
 
 import br.com.socialNetwork.domain.exception.user.UserUpdateException;
-import br.com.socialNetwork.domain.exception.user.createUserException;
-import br.com.socialNetwork.domain.exception.user.deleteUserException;
+import br.com.socialNetwork.domain.exception.user.CreateUserException;
+import br.com.socialNetwork.domain.exception.user.DeleteUserException;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.CommentRepository;
 import br.com.socialNetwork.domain.repository.FollowerRepository;
@@ -72,7 +72,7 @@ public class UserService {
             userRepository.delete(user);
         } catch (Exception ex){
             ex.printStackTrace();
-            throw new deleteUserException();
+            throw new DeleteUserException();
         }
     }
 
@@ -88,7 +88,7 @@ public class UserService {
             return  user;
         } catch (Exception ex){
             ex.printStackTrace();
-            throw new createUserException();
+            throw new CreateUserException();
         }
     }
 
