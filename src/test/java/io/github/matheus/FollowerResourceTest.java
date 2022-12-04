@@ -6,6 +6,7 @@ import br.com.socialNetwork.domain.repository.FollowerRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.follower.FollowerRequest;
 import br.com.socialNetwork.rest.resource.FollowerResource;
+import br.com.socialNetwork.rest.service.TokenService;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -29,8 +30,11 @@ class FollowerResourceTest {
     UserRepository userRepository;
     @Inject
     FollowerRepository followerRepository;
+    @Inject
+    TokenService tokenService;
     Long userId;
     Long followerId;
+    static String token;
 
     @BeforeEach
     @Transactional
@@ -39,8 +43,10 @@ class FollowerResourceTest {
         user.setEmail("matheus.reinert@hotmail.com");
         user.setUsername("@matheusReinert");
         user.setPassword("teste");
+        user.setToken(tokenService.generateToken());
         userRepository.persist(user);
         userId = user.getId();
+        token = user.getToken();
 
         var follower = new User();
         user.setEmail("eliaser.reinert@hotmail.com");
@@ -66,6 +72,7 @@ class FollowerResourceTest {
                 .contentType(ContentType.JSON)
                 .body(body)
                 .pathParam("userId", userId)
+                .header("Authorization", token)
                 .when()
                 .put()
                 .then()
@@ -86,6 +93,7 @@ class FollowerResourceTest {
                 .contentType(ContentType.JSON)
                 .body(body)
                 .pathParam("userId", nonexistentUserId)
+                .header("Authorization", token)
                 .when()
                 .put()
                 .then()
@@ -103,6 +111,7 @@ class FollowerResourceTest {
                 .contentType(ContentType.JSON)
                 .body(body)
                 .pathParam("userId", userId)
+                .header("Authorization", token)
                 .when()
                 .put()
                 .then()
@@ -118,6 +127,7 @@ class FollowerResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .pathParam("userId", nonexistentUserId)
+                .header("Authorization", token)
                 .when()
                 .get()
                 .then()
@@ -131,6 +141,7 @@ class FollowerResourceTest {
         var response = given()
                 .contentType(ContentType.JSON)
                 .pathParam("userId", userId)
+                .header("Authorization", token)
                 .when()
                 .get()
                 .then()
@@ -153,6 +164,7 @@ class FollowerResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .pathParam("userId", nonexistentUserId)
+                .header("Authorization", token)
                 .queryParam("followerId", followerId)
                 .when()
                 .delete()
@@ -166,6 +178,7 @@ class FollowerResourceTest {
         given()
                 .pathParam("userId", userId)
                 .queryParam("followerId", followerId)
+                .header("Authorization", token)
                 .when()
                 .delete()
                 .then()

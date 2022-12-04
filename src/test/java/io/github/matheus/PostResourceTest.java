@@ -30,10 +30,8 @@ class PostResourceTest {
     UserRepository userRepository;
     @Inject
     FollowerRepository followerRepository;
-
     @Inject
     PostRepository postRepository;
-
     @Inject
     TokenService tokenService;
     Long userId;
