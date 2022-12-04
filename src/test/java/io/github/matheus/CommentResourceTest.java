@@ -6,6 +6,7 @@ import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.comment.CommentRequest;
 import br.com.socialNetwork.rest.resource.CommentResource;
+import br.com.socialNetwork.rest.service.TokenService;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.*;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
@@ -26,12 +26,14 @@ public class CommentResourceTest {
 
     @Inject
     UserRepository userRepository;
-
     @Inject
     PostRepository postRepository;
+    @Inject
+    TokenService tokenService;
 
     Long userId;
     Long postId = Long.valueOf(1);
+    static String token;
 
     @BeforeEach
     @Transactional
@@ -41,7 +43,9 @@ public class CommentResourceTest {
         user.setUsername("@matheusReinert");
         user.setPassword("teste");
         userRepository.persist(user);
+        user.setToken(tokenService.generateToken());
         userId = user.getId();
+        token = user.getToken();
 
         var userThatWillComment = new User();
         userThatWillComment.setEmail("eliaser.reinert@hotmail.com");
@@ -65,6 +69,7 @@ public class CommentResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(body)
+                .header("Authorization", token)
                 .pathParam("postId", postId)
                 .queryParam("userId", userId)
                 .when()
@@ -83,6 +88,7 @@ public class CommentResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(body)
+                .header("Authorization", token)
                 .pathParam("postId", postId)
                 .queryParam("userId", userId)
                 .queryParam("commentParentId", 1)
@@ -100,6 +106,7 @@ public class CommentResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .when()
+                .header("Authorization", token)
                 .pathParams("postId", postId)
                 .get("posts/{postId}")
                 .then()
@@ -115,6 +122,7 @@ public class CommentResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .when()
+                .header("Authorization", token)
                 .pathParams("commentId", 1)
                 .get("{commentId}")
                 .then()

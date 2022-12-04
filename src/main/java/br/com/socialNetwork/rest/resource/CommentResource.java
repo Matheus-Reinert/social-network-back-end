@@ -25,18 +25,10 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CommentResource {
-
-    private UserRepository userRepository;
-    private PostRepository postRepository;
-    private CommentRepository commentRepository;
     private CommentService commentService;
 
     @Inject
-    public CommentResource(UserRepository userRepository, PostRepository postRepository,
-                           CommentRepository commentRepository, CommentService commentService){
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
+    public CommentResource(CommentService commentService){
         this.commentService = commentService;
     }
 
@@ -49,132 +41,51 @@ public class CommentResource {
             @PathParam("postId") Long postId,
             @QueryParam("userId") Long userId,
             @QueryParam("commentParentId") Long commentParentId,
+            @HeaderParam("Authorization") String token,
             CommentRequest request){
-
-        User user = userRepository.findById(userId);
-        if(user == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        Post post = postRepository.findById(postId);
-
-        if(post == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        Comment comment = new Comment();
-
-        if (commentParentId == null){
-            comment.setPost(post);
-            comment.setUser(user);
-            comment.setComment(request.getComment());
-            comment.setLikes(0);
-        } else {
-            Comment commentParent = commentRepository.findById(commentParentId);
-            comment.setUser(user);
-            comment.setComment(request.getComment());
-            comment.setCommentParent(commentParent);
-            comment.setLikes(0);
-        }
-
-        commentRepository.persist(comment);
-
-        return Response.status(Response.Status.CREATED).build();
+        return commentService.createComment(postId, userId, commentParentId, request, token);
     }
 
     @PUT
     @Path("{commentId}")
     @Operation(summary = "Editar comentário")
     @Transactional
-    public Response updateComment(@PathParam("commentId") Long commentId, CommentRequest commentRequest) {
-
-        Comment comment = commentRepository.findById(commentId);
-
-        if(comment == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        comment.setComment(commentRequest.getComment());
-        commentRepository.persist(comment);
-
-        return Response.noContent().build();
+    public Response updateComment(@PathParam("commentId") Long commentId, CommentRequest commentRequest,
+                                  @HeaderParam("Authorization") String token) {
+        return commentService.updateComment(commentId, commentRequest, token);
     }
 
     @DELETE
     @Path("{commentId}")
     @Operation(summary = "Remover comentário")
     @Transactional
-    public Response deleteComment(@PathParam("commentId") Long commentId){
-        Comment comment = commentRepository.findById(commentId);
-
-        if(comment != null){
-            commentService.removeChildComments(comment);
-            commentRepository.delete(comment);
-            return Response.noContent().build();
-        }
-
-        return Response.status(Response.Status.NOT_FOUND).build();
+    public Response deleteComment(@PathParam("commentId") Long commentId, @HeaderParam("Authorization") String token){
+        return commentService.deleteComment(commentId, token);
     }
 
     @GET
     @Path("posts/{postId}")
     @Operation(summary = "Retornar comentários principais")
     @Transactional
-    public Response commentsByPost(@PathParam("postId") Long postId){
-
-        Post post = postRepository.findById(postId);
-
-        if(post == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        List<Comment> comments = commentService.getComments(post);
-
-        if(comments == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        CommentPerPostResponse responseObject = new CommentPerPostResponse();
-
-        var commentsResponseList = comments.stream()
-                .map(CommentResponse::new)
-                .collect(Collectors.toList());
-
-        responseObject.setCommentResponse(commentsResponseList);
-        return Response.ok(new Gson().toJson(responseObject.getCommentResponse())).build();
+    public Response commentsByPost(@PathParam("postId") Long postId, @HeaderParam("Authorization") String token){
+        return commentService.commentsByPost(postId, token);
     }
 
     @GET
     @Path("{commentId}")
     @Operation(summary = "Retornar comentários filhos")
     @Transactional
-    public Response commentsChild(@PathParam("commentId") Long commentId){
+    public Response commentsChild(@PathParam("commentId") Long commentId,
+                                  @HeaderParam("Authorization") String token){
 
-        Comment comment = commentRepository.findById(commentId);
-
-        if(comment == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        return Response.ok(commentService.getCommentChilds(comment.getId())).build();
+        return commentService.commentsChild(commentId, token);
     }
 
     @PUT
     @Path("{commentId}/like")
     @Operation(summary = "Adicionar like ao comentário")
     @Transactional
-    public Response likeComment(@PathParam("commentId") Long commentId){
-
-        Comment comment = commentRepository.findById(commentId);
-
-        if(comment == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        comment.like();
-
-        commentRepository.persist(comment);
-
-        return Response.ok().build();
+    public Response likeComment(@PathParam("commentId") Long commentId, @HeaderParam("Authorization") String token){
+        return commentService.likeComment(commentId, token);
     }
 }
