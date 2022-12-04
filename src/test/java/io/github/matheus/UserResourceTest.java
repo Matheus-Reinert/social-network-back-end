@@ -1,14 +1,17 @@
 package io.github.matheus;
 
 
-import br.com.socialNetwork.rest.dto.CreateUserRequest;
-import br.com.socialNetwork.rest.dto.ResponseError;
+import br.com.socialNetwork.domain.model.User;
+import br.com.socialNetwork.domain.repository.UserRepository;
+import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
+import br.com.socialNetwork.rest.dto.user.ResponseError;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,9 @@ class UserResourceTest {
 
     @TestHTTPResource("/users")
     URL apiURL;
+
+    @Inject
+    UserRepository userRepository;
 
     @Test
     @DisplayName("should create user successfully")
@@ -71,21 +77,19 @@ class UserResourceTest {
         assertNotNull(errors.get(0).get("message"));
         assertNotNull(errors.get(1).get("message"));
     }
+
     @Test
     @DisplayName("Should list all users")
     @Order(3)
     public void listAllUsersTest(){
+        int listSize = userRepository.findAll().list().size();
 
         given()
                     .contentType(ContentType.JSON)
                 .when()
                     .get(apiURL)
                 .then()
-                    .statusCode(200).body("size()", Matchers.is(1));
-    }
-
-
-
-
+                    .statusCode(200).body("size()", Matchers.is(listSize));
+   }
 
 }

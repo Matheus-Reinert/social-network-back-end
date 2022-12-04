@@ -6,13 +6,12 @@ import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.CommentRepository;
 import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.*;
+import br.com.socialNetwork.rest.dto.comment.CommentRequest;
+import br.com.socialNetwork.rest.dto.comment.CommentResponse;
+import br.com.socialNetwork.rest.dto.post.CommentPerPostResponse;
 import br.com.socialNetwork.rest.service.CommentService;
 import com.google.gson.Gson;
-import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.info.Info;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

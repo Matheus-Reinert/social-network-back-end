@@ -1,10 +1,8 @@
 package br.com.socialNetwork.rest.resource;
 
-import br.com.socialNetwork.domain.model.Post;
 import br.com.socialNetwork.domain.model.User;
-import br.com.socialNetwork.rest.dto.CreatePostRequest;
-import br.com.socialNetwork.rest.dto.LoginRequest;
-import br.com.socialNetwork.rest.dto.UserAuthenticateResponse;
+import br.com.socialNetwork.rest.dto.login.LoginRequest;
+import br.com.socialNetwork.rest.dto.login.UserAuthenticateResponse;
 import br.com.socialNetwork.rest.service.UserAuthenticationService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 

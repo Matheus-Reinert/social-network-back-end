@@ -1,4 +1,4 @@
-package br.com.socialNetwork.rest.dto;
+package br.com.socialNetwork.rest.dto.comment;
 
 import lombok.Data;
 

@@ -4,7 +4,7 @@ import br.com.socialNetwork.domain.model.Follower;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.FollowerRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.FollowerRequest;
+import br.com.socialNetwork.rest.dto.follower.FollowerRequest;
 import br.com.socialNetwork.rest.resource.FollowerResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;

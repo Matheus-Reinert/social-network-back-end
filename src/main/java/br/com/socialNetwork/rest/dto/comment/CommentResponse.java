@@ -1,9 +1,6 @@
-package br.com.socialNetwork.rest.dto;
+package br.com.socialNetwork.rest.dto.comment;
 
 import br.com.socialNetwork.domain.model.Comment;
-import br.com.socialNetwork.domain.model.Post;
-
-import java.time.LocalDateTime;
 
 public class CommentResponse {
     private Long id;

@@ -1,14 +1,14 @@
 package br.com.socialNetwork.rest.resource;
 
-import br.com.socialNetwork.domain.model.Comment;
 import br.com.socialNetwork.domain.model.Post;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.FollowerRepository;
 import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.*;
+import br.com.socialNetwork.rest.dto.post.CreatePostRequest;
+import br.com.socialNetwork.rest.dto.post.PostResponse;
+import br.com.socialNetwork.rest.dto.post.PostsToUserResponse;
 import br.com.socialNetwork.rest.service.PostService;
-import br.com.socialNetwork.rest.service.TokenService;
 import br.com.socialNetwork.rest.service.UserAuthenticationService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
@@ -19,7 +19,6 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("/posts")

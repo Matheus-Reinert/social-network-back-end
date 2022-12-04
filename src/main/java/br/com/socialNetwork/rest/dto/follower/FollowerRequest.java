@@ -1,4 +1,4 @@
-package br.com.socialNetwork.rest.dto;
+package br.com.socialNetwork.rest.dto.follower;
 
 import lombok.Data;
 

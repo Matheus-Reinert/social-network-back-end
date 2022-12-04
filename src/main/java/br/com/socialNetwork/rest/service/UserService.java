@@ -2,10 +2,9 @@ package br.com.socialNetwork.rest.service;
 
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.UpdateField;
+import br.com.socialNetwork.rest.dto.login.UpdateField;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 
 @ApplicationScoped

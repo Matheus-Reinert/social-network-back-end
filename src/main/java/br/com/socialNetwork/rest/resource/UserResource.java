@@ -2,9 +2,9 @@ package br.com.socialNetwork.rest.resource;
 
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.CreateUserRequest;
-import br.com.socialNetwork.rest.dto.ResponseError;
-import br.com.socialNetwork.rest.dto.UpdateField;
+import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
+import br.com.socialNetwork.rest.dto.user.ResponseError;
+import br.com.socialNetwork.rest.dto.login.UpdateField;
 import br.com.socialNetwork.rest.service.PasswordService;
 import br.com.socialNetwork.rest.service.TokenService;
 import br.com.socialNetwork.rest.service.UserService;

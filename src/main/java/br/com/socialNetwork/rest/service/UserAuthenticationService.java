@@ -4,13 +4,10 @@ import br.com.socialNetwork.domain.exception.ExpiredTokenException;
 import br.com.socialNetwork.domain.exception.InvalidTokenException;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.LoginRequest;
+import br.com.socialNetwork.rest.dto.login.LoginRequest;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.core.Response;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.util.Date;
 
 @ApplicationScoped

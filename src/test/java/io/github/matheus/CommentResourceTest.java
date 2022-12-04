@@ -1,11 +1,10 @@
 package io.github.matheus;
 
-import br.com.socialNetwork.domain.model.Comment;
 import br.com.socialNetwork.domain.model.Post;
 import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.CommentRequest;
+import br.com.socialNetwork.rest.dto.comment.CommentRequest;
 import br.com.socialNetwork.rest.resource.CommentResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -15,6 +14,8 @@ import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 

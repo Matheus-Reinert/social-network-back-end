@@ -6,8 +6,7 @@ import br.com.socialNetwork.domain.model.User;
 import br.com.socialNetwork.domain.repository.FollowerRepository;
 import br.com.socialNetwork.domain.repository.PostRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.CreatePostRequest;
-import br.com.socialNetwork.rest.dto.FollowerRequest;
+import br.com.socialNetwork.rest.dto.post.CreatePostRequest;
 import br.com.socialNetwork.rest.resource.PostResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,8 +18,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
 
 import static io.restassured.RestAssured.given;
 

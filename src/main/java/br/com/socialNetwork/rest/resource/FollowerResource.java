@@ -3,9 +3,9 @@ package br.com.socialNetwork.rest.resource;
 import br.com.socialNetwork.domain.model.Follower;
 import br.com.socialNetwork.domain.repository.FollowerRepository;
 import br.com.socialNetwork.domain.repository.UserRepository;
-import br.com.socialNetwork.rest.dto.FollowerRequest;
-import br.com.socialNetwork.rest.dto.FollowerResponse;
-import br.com.socialNetwork.rest.dto.FollowersPerUserResponse;
+import br.com.socialNetwork.rest.dto.follower.FollowerRequest;
+import br.com.socialNetwork.rest.dto.follower.FollowerResponse;
+import br.com.socialNetwork.rest.dto.follower.FollowersPerUserResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.inject.Inject;

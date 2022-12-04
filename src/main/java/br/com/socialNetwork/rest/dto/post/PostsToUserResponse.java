@@ -1,5 +1,6 @@
-package br.com.socialNetwork.rest.dto;
+package br.com.socialNetwork.rest.dto.post;
 
+import br.com.socialNetwork.rest.dto.post.PostResponse;
 import lombok.Data;
 
 import java.util.List;

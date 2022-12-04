@@ -1,4 +1,4 @@
-package br.com.socialNetwork.rest.dto;
+package br.com.socialNetwork.rest.dto.login;
 
 import br.com.socialNetwork.domain.model.User;
 import lombok.Data;
