@@ -37,6 +37,7 @@ public class UserTestUtil {
         userBeforeUpdate.setEmail("BeforeTest");
         userBeforeUpdate.setPassword("BeforeTest");
         userBeforeUpdate.setUsername("BeforeTest");
+        userBeforeUpdate.setToken("eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzAyMDA0MjgsInN1YiI6IlRlc3RlIEp3dCIsImV4cCI6MTY3MDIwMDYwOH0.T0irK8XX-3erg_ShcmZhdHleKjWWCvcaJvpQhqbrkGk");
         userRepository.persist(userBeforeUpdate);
     }
 }

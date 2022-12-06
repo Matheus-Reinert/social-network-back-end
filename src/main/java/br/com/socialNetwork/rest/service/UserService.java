@@ -12,6 +12,7 @@ import br.com.socialNetwork.rest.dto.login.UpdateField;
 import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.Column;
 import javax.ws.rs.core.Response;
 import java.util.List;
 

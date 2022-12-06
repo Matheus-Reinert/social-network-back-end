@@ -6,8 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class UserAuthenticateResponse {
-//    private String email;
-//    private String name;
     private String token;
     private UserResponseToLogin user;
 

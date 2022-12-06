@@ -7,6 +7,7 @@ import br.com.socialNetwork.domain.repository.UserRepository;
 import br.com.socialNetwork.rest.dto.login.UpdateField;
 import br.com.socialNetwork.rest.dto.user.CreateUserRequest;
 import br.com.socialNetwork.rest.dto.user.ResponseError;
+import br.com.socialNetwork.rest.service.PasswordService;
 import br.com.socialNetwork.rest.service.TokenService;
 import io.github.matheus.util.UserTestUtil;
 import io.quarkus.test.common.http.TestHTTPResource;
@@ -38,6 +39,8 @@ class UserResourceTest {
     UserTestUtil userTestUtil;
     @Inject
     TokenService tokenService;
+    @Inject
+    PasswordService passwordService;
     static int userListSize;
     static int deletedUserId;
     static String token;
