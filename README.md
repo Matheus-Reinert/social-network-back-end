@@ -127,5 +127,5 @@ O Projeto foi criado utilizando java 11 com Quarkus. A arquitetura escolhida foi
 
 # Desenvolvimento do projeto
 
-[Cards](https://github.com/Matheus-Reinert/social-network-front/blob/master/CARDS.md)
+[Cards](https://github.com/Matheus-Reinert/social-network-back-end/blob/master/CARDS.md)
 
