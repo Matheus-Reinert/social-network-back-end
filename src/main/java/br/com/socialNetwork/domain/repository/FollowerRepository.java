@@ -9,6 +9,7 @@ import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,9 +39,14 @@ public class FollowerRepository implements PanacheRepository<Follower> {
         delete("follower.id =:followerId and user.id =:userId", params);
     }
 
-    public List<Follower> findAllUsersThatUserFollow(User user) {
+    public List<Long> findAllUsersIdsThatUserFollow(User user) {
+        List<Long> usersIds = new ArrayList<>();
+
         PanacheQuery<Follower> query = find("follower.id", user.getId());
-        return query.list();
+        if (query.list().size() > 0){
+            query.list().forEach(n -> usersIds.add(n.getUser().getId()));
+        }
+        return usersIds;
     }
 
     public void deleteByUser(Long userId) {

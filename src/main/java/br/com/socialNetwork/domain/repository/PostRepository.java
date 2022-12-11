@@ -24,18 +24,9 @@ public class PostRepository implements PanacheRepository<Post> {
         delete("id =:postId and user.id =:userId", params);
     }
 
-    public List<Post> getPostsByUsersThatUserFollow(List<Follower> peopleTheUserFollows) {
-        List<Post> posts = new ArrayList<>();
-        for (Follower person: peopleTheUserFollows){
-            PanacheQuery<Post> query = find("user.id", Sort.by("dateTime", Sort.Direction.Descending), person.getId());
-            if (query.list().size() > 0){
-                for (int i = 0; i < query.list().size(); i++){
-                    posts.add(query.list().get(i));
-                }
-            }
-        }
-
-        return posts;
+    public List<Post> getPostsByUsersThatUserFollow(List<Long> peopleTheUserFollowsIds) {
+        PanacheQuery<Post> query = find("user.id in ?1", Sort.by("dateTime", Sort.Direction.Descending), peopleTheUserFollowsIds);
+        return query.list();
     }
 
     public void deleteByUser(Long userId) {

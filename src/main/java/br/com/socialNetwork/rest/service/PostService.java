@@ -45,13 +45,10 @@ public class PostService {
             return posts;
         }
 
-        List<Follower> peopleTheUserFollows = followerRepository.findAllUsersThatUserFollow(user);
+        List<Long> peopleIdsTheUserFollows = followerRepository.findAllUsersIdsThatUserFollow(user);
+        peopleIdsTheUserFollows.add(user.getId());
 
-        if(peopleTheUserFollows.size() == 0){
-            return posts;
-        }
-
-        posts = postRepository.getPostsByUsersThatUserFollow(peopleTheUserFollows);
+        posts = postRepository.getPostsByUsersThatUserFollow(peopleIdsTheUserFollows);
 
         return posts;
     }
